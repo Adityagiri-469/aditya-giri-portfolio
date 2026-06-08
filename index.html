@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aditya Giri — Frontend Developer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg:       #020510;
+      --surface:  #080f1e;
+      --glass:    rgba(10,20,50,0.55);
+      --blue:     #2563eb;
+      --blue-lt:  #3b82f6;
+      --cyan:     #06b6d4;
+      --accent:   #60a5fa;
+      --txt:      #e2e8f0;
+      --txt-muted:#94a3b8;
+      --border:   rgba(59,130,246,0.18);
+      --glow:     0 0 40px rgba(37,99,235,0.35);
+      --r:        14px;
+      --font:     'Poppins', sans-serif;
+      --mono:     'Space Mono', monospace;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--bg); color: var(--txt); overflow-x: hidden; line-height: 1.7; }
+    ::selection { background: var(--blue); color: #fff; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 99px; }
+
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: .4;
+    }
+
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 110px 0; }
+    .tag {
+      display: inline-block; font-size: .7rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--cyan); background: rgba(6,182,212,.1); border: 1px solid rgba(6,182,212,.25);
+      padding: 4px 12px; border-radius: 99px; margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; line-height: 1.15;
+      background: linear-gradient(135deg, #fff 30%, var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px;
+    }
+    .section-sub { color: var(--txt-muted); font-size: 1.05rem; max-width: 520px; margin-bottom: 56px; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 32px; border-radius: 8px; font-family: var(--font);
+      font-size: .95rem; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: all .3s ease; border: none;
+    }
+    /* ── FIX: force white text on all primary buttons, overrides gradient-text leak ── */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff !important;
+      box-shadow: 0 0 30px rgba(37,99,235,.4);
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px); box-shadow: 0 0 50px rgba(37,99,235,.6);
+      color: #ffffff !important; -webkit-text-fill-color: #ffffff !important;
+    }
+    .btn-outline {
+      background: transparent; color: var(--accent);
+      border: 1.5px solid var(--border); backdrop-filter: blur(8px);
+    }
+    .btn-outline:hover { border-color: var(--blue-lt); background: rgba(37,99,235,.1); transform: translateY(-2px); }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 18px 0; background: rgba(2,5,16,.7);
+      backdrop-filter: blur(20px) saturate(160%);
+      border-bottom: 1px solid var(--border); transition: padding .3s;
+    }
+    nav.scrolled { padding: 12px 0; }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1140px; margin: 0 auto; padding: 0 24px;
+    }
+    .logo { font-family: var(--mono); font-size: 1.1rem; font-weight: 700; color: #fff; text-decoration: none; letter-spacing: .04em; }
+    .logo span { color: var(--cyan); }
+    .nav-links { display: flex; gap: 15px; list-style: none; }
+    .nav-links a {
+      color: var(--txt-muted); text-decoration: none; font-size: .9rem;
+      font-weight: 500; letter-spacing: .04em; transition: color .2s; position: relative;
+    }
+    .nav-links a::after { content: ""; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--cyan); transition: width .3s; }
+    .nav-links a:hover { color: #fff; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta { display: flex; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { width: 24px; height: 2px; background: var(--txt); border-radius: 2px; transition: all .3s; }
+    .mobile-menu {
+      display: none; position: fixed; inset: 0; background: rgba(2,5,16,.97);
+      backdrop-filter: blur(20px); z-index: 999; flex-direction: column;
+      align-items: center; justify-content: center; gap: 36px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { color: var(--txt); text-decoration: none; font-size: 1.4rem; font-weight: 600; }
+    .mobile-menu a:hover { color: var(--cyan); }
+    .close-menu { position: absolute; top: 24px; right: 28px; font-size: 1.8rem; cursor: pointer; color: var(--txt-muted); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; order: 2; }
+      .nav-cta { display: flex; order: 1; margin-right: 15px; }
+      .nav-cta .btn { padding: 6px 12px; font-size: 0.75rem; }
+    }
+
+    /* HERO */
+    #hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding-top: 90px;
+  padding-bottom: 80px; //* 👈 Ye space bana dega scroll hint ke liye */
+}
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(37,99,235,.18) 0%, transparent 65%),
+                  radial-gradient(ellipse 50% 40% at 20% 80%, rgba(6,182,212,.1) 0%, transparent 55%), var(--bg);
+    }
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image: linear-gradient(rgba(59,130,246,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, #000 30%, transparent 100%);
+    }
+    .hero-orb { position: absolute; border-radius: 50%; filter: blur(80px); animation: pulse-orb 6s ease-in-out infinite alternate; }
+    .orb1 { width: 500px; height: 500px; background: rgba(37,99,235,.15); top: -100px; right: -100px; }
+    .orb2 { width: 350px; height: 350px; background: rgba(6,182,212,.1); bottom: -50px; left: -80px; animation-delay: 2s; }
+    @keyframes pulse-orb { from{transform:scale(1)} to{transform:scale(1.15)} }
+    .hero-content { position: relative; z-index: 1; max-width: 760px; }
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--mono); font-size: .8rem; color: var(--cyan);
+      letter-spacing: .14em; text-transform: uppercase; margin-bottom: 24px;
+      opacity: 0; animation: fade-up .8s .2s forwards;
+    }
+    .hero-eyebrow::before { content: ""; display: block; width: 28px; height: 1.5px; background: var(--cyan); }
+    h1 { font-size: clamp(2.4rem, 5.5vw, 4rem); font-weight: 900; line-height: 1.08; letter-spacing: -.02em; opacity: 0; animation: fade-up .9s .4s forwards; }
+    h1 .gradient-text { background: linear-gradient(135deg, var(--blue-lt), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-sub { margin-top: 22px; font-size: 1.1rem; color: var(--txt-muted); font-weight: 400; opacity: 0; animation: fade-up .9s .6s forwards; max-width: 500px; }
+    .hero-sub strong { color: var(--accent); font-weight: 600; }
+    .hero-actions { margin-top: 40px; display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; animation: fade-up .9s .8s forwards; }
+    .hero-stats {
+      margin-top: 64px; display: flex; gap: 48px; flex-wrap: wrap;
+      opacity: 0; animation: fade-up .9s 1s forwards;
+      border-top: 1px solid var(--border); padding-top: 40px;
+    }
+    .stat-num { font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
+    .stat-label { font-size: .8rem; color: var(--txt-muted); letter-spacing: .06em; text-transform: uppercase; margin-top: 4px; }
+
+  .scroll-hint {
+  position: absolute;
+  bottom: 25px; /* Isse ye screen ke bilkul bottom se thoda upar rahega */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--txt-muted);
+  font-size: .75rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  animation: bounce 2s infinite;
+  z-index: 100; /* Taaki ye kisi bhi content ke peeche na chhup jaye */
+  pointer-events: none; /* Taaki ispe click karne se koi dikat na ho */
+}
+}
+    .scroll-hint::after { content: ""; display: block; width: 1.5px; height: 40px; background: linear-gradient(var(--cyan), transparent); }
+    @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+    @keyframes fade-up { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ABOUT */
+    #about { background: linear-gradient(180deg, var(--bg) 0%, var(--surface) 100%); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .about-visual { position: relative; }
+    .about-card { background: var(--glass); border: 1px solid var(--border); border-radius: var(--r); padding: 40px; backdrop-filter: blur(16px); box-shadow: var(--glow); position: relative; overflow: hidden; }
+    .about-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+    .about-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--cyan)); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 20px; box-shadow: 0 0 30px rgba(37,99,235,.5); }
+    .about-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+    .about-card .role { color: var(--cyan); font-size: .85rem; font-family: var(--mono); }
+    .about-floating { position: absolute; bottom: -20px; right: -20px; background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; backdrop-filter: blur(12px); font-size: .8rem; color: var(--txt-muted); }
+    .about-floating strong { color: var(--accent); font-size: 1.4rem; display: block; }
+    .about-text p { color: var(--txt-muted); margin-bottom: 18px; font-size: 1rem; }
+    .about-text p strong { color: var(--txt); font-weight: 600; }
+    .check-list { list-style: none; margin-top: 28px; display: flex; flex-direction: column; gap: 12px; }
+    .check-list li { display: flex; align-items: center; gap: 12px; color: var(--txt-muted); font-size: .95rem; }
+    .check-list li::before { content: "✓"; display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(6,182,212,.15); color: var(--cyan); font-size: .75rem; font-weight: 700; flex-shrink: 0; }
+
+    /* SKILLS */
+    #skills { background: var(--surface); }
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+    .skill-card { background: var(--glass); border: 1px solid var(--border); border-radius: var(--r); padding: 28px 24px; backdrop-filter: blur(12px); transition: all .35s ease; cursor: default; text-align: center; position: relative; overflow: hidden; }
+    .skill-card::before { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--blue), var(--cyan)); transform: scaleX(0); transition: transform .35s ease; }
+    .skill-card:hover { transform: translateY(-6px); border-color: rgba(59,130,246,.4); box-shadow: var(--glow); }
+    .skill-card:hover::before { transform: scaleX(1); }
+    .skill-icon { font-size: 2.2rem; margin-bottom: 14px; display: block; }
+    .skill-name { font-weight: 700; font-size: .95rem; margin-bottom: 6px; }
+    .skill-desc { font-size: .78rem; color: var(--txt-muted); }
+
+    /* PROJECTS */
+    #projects { background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%); }
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px; }
+    .project-card { background: var(--glass); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; backdrop-filter: blur(16px); transition: all .4s ease; }
+    .project-card:hover { transform: translateY(-8px); border-color: rgba(59,130,246,.4); box-shadow: 0 20px 60px rgba(37,99,235,.25); }
+    .project-thumb { height: 210px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .project-thumb-bg { position: absolute; inset: 0; background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%); opacity: .12; }
+    .project-thumb-icon { font-size: 4rem; position: relative; z-index: 1; }
+    .project-thumb-lines { position: absolute; inset: 0; background-image: linear-gradient(rgba(59,130,246,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,.08) 1px, transparent 1px); background-size: 30px 30px; }
+    .project-thumb::after { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, var(--glass)); }
+    .project-body { padding: 28px; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .project-tag { font-size: .68rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--blue-lt); background: rgba(59,130,246,.1); border: 1px solid rgba(59,130,246,.2); padding: 3px 10px; border-radius: 99px; }
+    .project-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+    .project-desc { font-size: .88rem; color: var(--txt-muted); line-height: 1.65; }
+    .project-footer { padding: 20px 28px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
+    .project-link { display: inline-flex; align-items: center; gap: 6px; color: var(--cyan); font-size: .82rem; font-weight: 600; text-decoration: none; letter-spacing: .04em; transition: gap .2s; }
+    .project-link:hover { gap: 10px; }
+
+    /* WHY ME */
+    #why { background: var(--bg); }
+    .why-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; }
+    .why-card { background: var(--glass); border: 1px solid var(--border); border-radius: var(--r); padding: 36px 28px; backdrop-filter: blur(12px); transition: all .35s ease; position: relative; overflow: hidden; }
+    .why-card:hover { transform: translateY(-5px); border-color: rgba(59,130,246,.35); box-shadow: var(--glow); }
+    .why-num { font-family: var(--mono); font-size: 3.5rem; font-weight: 700; color: rgba(37,99,235,.18); line-height: 1; margin-bottom: 16px; }
+    .why-icon { font-size: 2rem; margin-bottom: 16px; display: block; }
+    .why-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+    .why-desc { font-size: .85rem; color: var(--txt-muted); line-height: 1.65; }
+
+    /* TESTIMONIALS */
+    #testimonials { background: var(--surface); }
+    .testi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+    .testi-card { background: var(--glass); border: 1px solid var(--border); border-radius: 18px; padding: 36px; backdrop-filter: blur(16px); transition: all .35s ease; position: relative; }
+    .testi-card::before { content: "\201C"; position: absolute; top: 20px; right: 28px; font-size: 5rem; line-height: 1; color: rgba(37,99,235,.15); font-family: Georgia, serif; }
+    .testi-card:hover { transform: translateY(-5px); box-shadow: var(--glow); border-color: rgba(59,130,246,.35); }
+    .testi-stars { display: flex; gap: 4px; margin-bottom: 18px; }
+    .star { color: #f59e0b; font-size: 1rem; }
+    .testi-text { color: var(--txt-muted); font-size: .92rem; line-height: 1.72; margin-bottom: 28px; font-style: italic; }
+    .testi-author { display: flex; align-items: center; gap: 14px; }
+    .testi-avatar { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; color: #fff; }
+    .testi-info .name { font-weight: 700; font-size: .9rem; }
+    .testi-info .company { font-size: .78rem; color: var(--txt-muted); }
+
+    /* CONTACT */
+    #contact { background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+    .contact-info p { color: var(--txt-muted); margin-bottom: 36px; font-size: 1rem; }
+    .contact-channels { display: flex; flex-direction: column; gap: 16px; }
+    .contact-channel { display: flex; align-items: center; gap: 16px; background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; backdrop-filter: blur(12px); text-decoration: none; color: var(--txt); transition: all .3s; }
+    .contact-channel:hover { border-color: rgba(59,130,246,.4); transform: translateX(6px); box-shadow: var(--glow); }
+    .channel-icon { width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .wa-icon { background: rgba(37,211,102,.15); }
+    .em-icon { background: rgba(37,99,235,.15); }
+    .channel-detail .ch-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--txt-muted); }
+    .channel-detail .ch-val { font-weight: 600; font-size: .92rem; margin-top: 2px; }
+    .contact-form { background: var(--glass); border: 1px solid var(--border); border-radius: 18px; padding: 40px; backdrop-filter: blur(16px); }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: .8rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--txt-muted); margin-bottom: 8px; }
+    .form-group input, .form-group textarea { width: 100%; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; color: var(--txt); font-family: var(--font); font-size: .95rem; outline: none; transition: border-color .3s, box-shadow .3s; resize: none; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--blue-lt); box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+    .form-group textarea { height: 120px; }
+    .btn-full { width: 100%; justify-content: center; }
+    .form-success { display: none; text-align: center; padding: 20px; color: var(--cyan); font-weight: 600; }
+
+    /* FOOTER */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 48px 0 30px; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; margin-bottom: 36px; }
+    .footer-logo { font-family: var(--mono); font-size: 1rem; font-weight: 700; color: #fff; }
+    .footer-logo span { color: var(--cyan); }
+    .footer-links { display: flex; gap: 28px; flex-wrap: wrap; }
+    .footer-links a { color: var(--txt-muted); text-decoration: none; font-size: .85rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-copy { color: var(--txt-muted); font-size: .8rem; }
+    .footer-made { color: var(--txt-muted); font-size: .8rem; }
+    .footer-made span { color: #e53e3e; }
+
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(36px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+    .reveal-delay-4 { transition-delay: .4s; }
+
+    @media (max-width: 900px) {
+      .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+      .about-visual { display: none; }
+    }
+    @media (max-width: 600px) {
+      .section { padding: 80px 0; }
+      .hero-stats { gap: 32px; }
+      .projects-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#hero" class="logo">AG<span>.</span>dev</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#testimonials">Reviews</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="https://wa.me/917428620561" class="btn btn-primary" target="_blank">💬 Hire Me</a>
+    </div>
+    <div class="hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <span class="close-menu" id="closeMenu">✕</span>
+  <a href="#about" class="mobile-link">About</a>
+  <a href="#skills" class="mobile-link">Skills</a>
+  <a href="#projects" class="mobile-link">Projects</a>
+  <a href="#testimonials" class="mobile-link">Reviews</a>
+  <a href="#contact" class="mobile-link">Contact</a>
+  <a href="https://wa.me/917428620561" class="btn btn-primary" target="_blank">💬 Hire Me</a>
+</div>
+
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-orb orb1"></div>
+  <div class="hero-orb orb2"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-eyebrow">Frontend Developer — Available for projects</div>
+      <h1>I build websites that bring <span class="gradient-text">customers,</span> not just visitors.</h1>
+      <p class="hero-sub">
+        <strong>Aditya Giri</strong> — Frontend Developer specializing in
+        <strong>Business Websites</strong>, High-converting Landing Pages &amp; <strong>WhatsApp Integration</strong>.
+      </p>
+      <div class="hero-actions">
+        <a href="https://wa.me/917428620561" class="btn btn-primary" target="_blank">🚀 Get Your Website Now</a>
+        <a href="#projects" class="btn btn-outline">View My Work →</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-num">5+</div>
+          <div class="stat-label">Projects Delivered</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Client Satisfaction</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">3–5</div>
+          <div class="stat-label">Days Delivery</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<section id="about" class="section">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-visual reveal">
+        <div class="about-card">
+          <div class="about-avatar">AG</div>
+          <h3>Aditya Giri</h3>
+          <div class="role">// Frontend Developer</div>
+          <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);">
+            <div style="display:flex;gap:16px;flex-wrap:wrap;">
+              <div style="text-align:center;flex:1;">
+                <div style="font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">HTML</div>
+                <div style="font-size:.7rem;color:var(--txt-muted);">Expert</div>
+              </div>
+              <div style="text-align:center;flex:1;">
+                <div style="font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">CSS</div>
+                <div style="font-size:.7rem;color:var(--txt-muted);">Expert</div>
+              </div>
+              <div style="text-align:center;flex:1;">
+                <div style="font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">JS</div>
+                <div style="font-size:.7rem;color:var(--txt-muted);">Proficient</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:24px;padding:16px;background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.15);border-radius:10px;">
+            <div style="font-size:.75rem;color:var(--cyan);font-weight:600;margin-bottom:6px;">⚡ Currently Available</div>
+            <div style="font-size:.82rem;color:var(--txt-muted);">Accepting new projects for May 2025</div>
+          </div>
+        </div>
+        <div class="about-floating">
+          <strong>₹15K+</strong>
+          Avg. project value
+        </div>
+      </div>
+      <div class="about-text">
+        <span class="tag reveal">About Me</span>
+        <h2 class="section-title reveal reveal-delay-1">Helping businesses grow online — one pixel at a time.</h2>
+        <div class="reveal reveal-delay-2">
+          <p>I'm <strong>Aditya Giri</strong>, a frontend developer based in India. I don't just write code — I build digital assets that work hard for your business 24/7.</p>
+          <p>Most developers build websites that <em>look</em> good. I build websites that <strong>convert visitors into paying customers</strong> — with clear messaging, fast load times, and strategic WhatsApp integration so you never miss a lead.</p>
+          <p>Whether you're a salon, clinic, local business, or startup — I'll build you a website your competitors will envy.</p>
+          <ul class="check-list">
+            <li>Clean, mobile-first design optimized for conversions</li>
+            <li>WhatsApp &amp; lead capture integration built-in</li>
+            <li>Fast delivery — go live in 3–5 business days</li>
+            <li>Plain-English communication, no tech jargon</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills" class="section">
+  <div class="container">
+    <div class="reveal">
+      <span class="tag">What I Work With</span>
+      <h2 class="section-title">Skills &amp; Expertise</h2>
+      <p class="section-sub">Every tool in my stack is chosen to deliver fast, beautiful, and conversion-ready websites.</p>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card reveal reveal-delay-1"><span class="skill-icon">🏗️</span><div class="skill-name">HTML5</div><div class="skill-desc">Semantic, accessible markup that search engines and users love</div></div>
+      <div class="skill-card reveal reveal-delay-2"><span class="skill-icon">🎨</span><div class="skill-name">CSS3</div><div class="skill-desc">Animations, grid layouts, and pixel-perfect visual design</div></div>
+      <div class="skill-card reveal reveal-delay-3"><span class="skill-icon">⚡</span><div class="skill-name">JavaScript</div><div class="skill-desc">Interactive elements, form logic, and smooth user experience</div></div>
+      <div class="skill-card reveal reveal-delay-1"><span class="skill-icon">📱</span><div class="skill-name">Responsive Design</div><div class="skill-desc">Flawless on mobile, tablet, and desktop — always</div></div>
+      <div class="skill-card reveal reveal-delay-2"><span class="skill-icon">🎯</span><div class="skill-name">Landing Pages</div><div class="skill-desc">High-converting pages built around your customer's journey</div></div>
+      <div class="skill-card reveal reveal-delay-3"><span class="skill-icon">💬</span><div class="skill-name">WhatsApp Integration</div><div class="skill-desc">Direct booking &amp; inquiry buttons that bring real leads</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="section">
+  <div class="container">
+    <div class="reveal">
+      <span class="tag">Featured Work</span>
+      <h2 class="section-title">Projects That Perform</h2>
+      <p class="section-sub">Real websites built to generate business — not just look pretty in a portfolio.</p>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card reveal reveal-delay-1">
+        <div class="project-thumb" style="background:linear-gradient(135deg,#0a0f2e,#1a2a4a);">
+          <div class="project-thumb-bg"></div><div class="project-thumb-lines"></div>
+          <div class="project-thumb-icon">💇‍♀️</div>
+        </div>
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">Booking System</span><span class="project-tag">WhatsApp</span><span class="project-tag">Lead Gen</span></div>
+          <h3 class="project-title">Salon Website</h3>
+          <p class="project-desc">A premium salon landing page featuring a WhatsApp booking system that lets clients book appointments in one tap. Service menu, gallery, and reviews — all optimized to drive walk-ins and online inquiries.</p>
+        </div>
+        <div class="project-footer"><a href="https://wa.me/917428620561" class="project-link" target="_blank">Request a Similar Site →</a></div>
+      </div>
+      <div class="project-card reveal reveal-delay-2">
+        <div class="project-thumb" style="background:linear-gradient(135deg,#050d1e,#0e2040);">
+          <div class="project-thumb-bg" style="opacity:.18;"></div><div class="project-thumb-lines"></div>
+          <div class="project-thumb-icon">🦷</div>
+        </div>
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">Clinic UI</span><span class="project-tag">Appointment</span><span class="project-tag">Trust-Building</span></div>
+          <h3 class="project-title">Dentist Website</h3>
+          <p class="project-desc">A clean, professional website for a dental clinic designed to build trust instantly. Features a smooth appointment form, service breakdown, doctor profile, and patient testimonials to turn browsers into booked patients.</p>
+        </div>
+        <div class="project-footer"><a href="https://wa.me/917428620561" class="project-link" target="_blank">Request a Similar Site →</a></div>
+      </div>
+      <div class="project-card reveal reveal-delay-3">
+        <div class="project-thumb" style="background:linear-gradient(135deg,#030a1c,#091530);">
+          <div class="project-thumb-bg" style="background:linear-gradient(135deg,#06b6d4,#2563eb);opacity:.14;"></div><div class="project-thumb-lines"></div>
+          <div class="project-thumb-icon">🚀</div>
+        </div>
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">High Conversion</span><span class="project-tag">CTA-Focused</span><span class="project-tag">Landing Page</span></div>
+          <h3 class="project-title">High-Converting Landing Page</h3>
+          <p class="project-desc">A results-first landing page engineered around a single conversion goal. Bold headline, social proof, clear benefit bullets, and a prominent CTA — every element designed to push the visitor toward action.</p>
+        </div>
+        <div class="project-footer"><a href="https://wa.me/917428620561" class="project-link" target="_blank">Request a Similar Site →</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="why" class="section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;max-width:600px;margin:0 auto 56px;">
+      <span class="tag">Why Aditya</span>
+      <h2 class="section-title">Why Clients Keep Coming Back</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal reveal-delay-1"><div class="why-num">01</div><span class="why-icon">⚡</span><div class="why-title">Fast Delivery</div><div class="why-desc">Your website goes live in 3–5 business days. No endless revisions, no missed deadlines.</div></div>
+      <div class="why-card reveal reveal-delay-2"><span class="why-icon">✨</span><div class="why-num">02</div><div class="why-title">Modern Design</div><div class="why-desc">Premium, agency-level UI that makes your business look like a million bucks — even if you're just starting out.</div></div>
+      <div class="why-card reveal reveal-delay-3"><span class="why-icon">📱</span><div class="why-num">03</div><div class="why-title">Mobile Optimized</div><div class="why-desc">80% of your customers will visit on their phone. Every site I build is flawless on every screen size.</div></div>
+      <div class="why-card reveal reveal-delay-4"><span class="why-icon">🤝</span><div class="why-num">04</div><div class="why-title">Client-Focused</div><div class="why-desc">I speak in plain language, give honest advice, and only recommend what your business actually needs.</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="testimonials" class="section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;max-width:520px;margin:0 auto 56px;">
+      <span class="tag">Client Reviews</span>
+      <h2 class="section-title">What Clients Say</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal reveal-delay-1">
+        <div class="testi-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        <p class="testi-text">"Aditya built our salon website in just 4 days. The WhatsApp booking button alone tripled our inquiry rate within the first week. Clients keep telling us the site looks expensive — it wasn't. Best investment we made."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#ec4899,#f59e0b);">PR</div>
+          <div class="testi-info"><div class="name">Priya Rajput</div><div class="company">Owner, Shine Beauty & Bridal Studio, Noida</div></div>
+        </div>
+      </div>
+      <div class="testi-card reveal reveal-delay-2">
+        <div class="testi-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        <p class="testi-text">"We needed a clean, trustworthy website for our dental clinic quickly. Aditya delivered exactly that — professional design, fast load, patients find us easily. Clear communication throughout."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#2563eb,#06b6d4);">DS</div>
+          <div class="testi-info"><div class="name">Dr. Deepak Sharma</div><div class="company">SmileCare Dental Clinic, Noida</div></div>
+        </div>
+      </div>
+      <div class="testi-card reveal reveal-delay-3">
+        <div class="testi-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        <p class="testi-text">"I came to Aditya with a vague idea and he turned it into a landing page that actually converts. The design is sharp and we saw real leads within days of going live. Would recommend 100%."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#10b981,#3b82f6);">RK</div>
+          <div class="testi-info"><div class="name">Rahul Kaushik</div><div class="company">Founder, FitStart India</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="section">
+  <div class="container">
+    <div class="reveal" style="max-width:600px;margin-bottom:56px;">
+      <span class="tag">Get In Touch</span>
+      <h2 class="section-title">Ready to grow your business online?</h2>
+      <p style="color:var(--txt-muted);font-size:1rem;">Let's talk about your project. I'll reply within a few hours — usually much faster.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <p>Whether you have a fully thought-out project or just a rough idea — reach out. I'll help you figure out exactly what you need and give you a honest quote with zero pressure.</p>
+        <div class="contact-channels">
+          <a href="https://wa.me/917428620561" class="contact-channel" target="_blank">
+            <div class="channel-icon wa-icon">💬</div>
+            <div class="channel-detail"><div class="ch-label">WhatsApp (fastest)</div><div class="ch-val">+91 74286 20561</div></div>
+            <div style="margin-left:auto;color:var(--txt-muted);font-size:1.1rem;">→</div>
+          </a>
+          <a href="mailto:adityagiri746737@gmail.com" class="contact-channel">
+            <div class="channel-icon em-icon">✉️</div>
+            <div class="channel-detail"><div class="ch-label">Email</div><div class="ch-val">adityagiri746737@gmail.com</div></div>
+            <div style="margin-left:auto;color:var(--txt-muted);font-size:1.1rem;">→</div>
+          </a>
+        </div>
+        <div style="margin-top:32px;padding:24px;background:rgba(37,99,235,.07);border:1px solid var(--border);border-radius:14px;">
+          <div style="font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;color:var(--txt-muted);margin-bottom:8px;">⏱ Response Time</div>
+          <div style="font-weight:700;color:var(--accent);">Usually within 2 hours</div>
+          <div style="font-size:.82rem;color:var(--txt-muted);margin-top:4px;">Mon–Sat, 9AM–9PM IST</div>
+        </div>
+      </div>
+      <div class="contact-form reveal reveal-delay-2">
+        <div id="formInner">
+          <div class="form-group"><label>Your Name</label><input type="text" id="fname" placeholder="e.g. Rahul Sharma" /></div>
+          <div class="form-group"><label>Email or WhatsApp</label><input type="text" id="femail" placeholder="your@email.com or +91 XXXXX" /></div>
+          <div class="form-group"><label>What do you need?</label><textarea id="fmsg" placeholder="Tell me about your business and what kind of website you're looking for..."></textarea></div>
+          <button class="btn btn-primary btn-full" onclick="submitForm()">🚀 Send Message</button>
+        </div>
+        <div class="form-success" id="formSuccess">✅ Message received! I'll get back to you very soon.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">AG<span>.</span>dev</div>
+      <nav class="footer-links">
+        <a href="#about">About</a><a href="#skills">Skills</a><a href="#projects">Projects</a><a href="#testimonials">Reviews</a><a href="#contact">Contact</a>
+      </nav>
+      <a href="https://wa.me/917428620561" class="btn btn-primary" target="_blank" style="font-size:.85rem;padding:11px 22px;">💬 WhatsApp Me</a>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Aditya Giri. All rights reserved.</div>
+      <div class="footer-made">Built with <span>♥</span> by Aditya Giri — adityagiri746737@gmail.com</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 60); });
+
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const closeMenu  = document.getElementById('closeMenu');
+  hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
+  closeMenu.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  document.querySelectorAll('.mobile-link').forEach(l => { l.addEventListener('click', () => mobileMenu.classList.remove('open')); });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  function submitForm() {
+    const name  = document.getElementById('fname').value.trim();
+    const email = document.getElementById('femail').value.trim();
+    const msg   = document.getElementById('fmsg').value.trim();
+    if (name.length < 2 || email.length < 5 || msg.length < 10) {
+      alert('Please fill in all details correctly (Name, Contact and Message properly).');
+      return;
+    }
+    const text = `Hi Aditya! 👋%0A%0A*Name:* ${encodeURIComponent(name)}%0A*Contact:* ${encodeURIComponent(email)}%0A%0A*Project Details:*%0A${encodeURIComponent(msg)}`;
+    document.getElementById('formInner').style.opacity = '0.3';
+    document.getElementById('formInner').style.pointerEvents = 'none';
+    document.getElementById('formSuccess').style.display = 'block';
+    setTimeout(() => { window.location.href = `https://wa.me/917428620561?text=${text}`; }, 800);
+  }
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+</script>
+</body>
+</html>
